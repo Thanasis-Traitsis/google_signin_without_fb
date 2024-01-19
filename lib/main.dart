@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 void main() {
   runApp(
@@ -22,7 +23,19 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () async {
+            final GoogleSignIn googleSignIn = GoogleSignIn(
+              scopes: <String>[
+                'email',
+              ],
+            );
+
+            var googleUser = await googleSignIn.signIn();
+
+            print(googleUser);
+
+            
+          },
           child: Container(
             width: 200,
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
