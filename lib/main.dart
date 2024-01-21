@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_signin_without_fb/widgets/google_button.dart';
+import 'package:google_signin_without_fb/widgets/user_field.dart';
 
 void main() {
   runApp(
@@ -9,56 +11,55 @@ void main() {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: HomePage(),
       debugShowCheckedModeBanner: false,
     ),
   );
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class HomePage extends StatefulWidget {
+  HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String? email = '';
+
+  String? username = '';
+
+  void googleSignIn() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      scopes: <String>[
+        'email',
+      ],
+    );
+
+    var googleUser = await (googleSignIn.signIn());
+
+    setState(() {
+      email = googleUser!.email;
+      username = googleUser.displayName;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () async {
-            final GoogleSignIn googleSignIn = GoogleSignIn(
-              scopes: <String>[
-                'email',
-              ],
-            );
-
-            var googleUser = await googleSignIn.signIn();
-
-            print(googleUser);
-
-            
-          },
-          child: Container(
-            width: 200,
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Row(
-              children: [
-                SizedBox(
-                  child: Image.asset(
-                    'assets/images/google_icon.png',
-                    width: 30,
-                    height: 30,
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                const Expanded(
-                  child: Text(
-                    'Google Sign-In',
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-              ],
-            ),
+      body: Padding(
+        padding: const EdgeInsets.all(40.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              UserField(field: 'Email', value: email!),
+              UserField(field: 'Username', value: username!),
+              const SizedBox(
+                height: 20,
+              ),
+              GoogleButton(function: googleSignIn),
+            ],
           ),
         ),
       ),
